@@ -3,7 +3,6 @@
 #pragma once
 
 #include "GameFramework/Pawn.h"
-#include "ShipMovementComponent.h"
 #include "Ship.generated.h"
 
 UCLASS()
