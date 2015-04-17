@@ -8,7 +8,9 @@
 UCLASS()
 class SPAECINVAEDRS_API AEnemy : public AActor
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
+
+    bool isShooting = false;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -19,6 +21,8 @@ public:
 	
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
+
+    void shoot();
 
     UFUNCTION()
     void OnBeginOverlap(AActor *otherActor);

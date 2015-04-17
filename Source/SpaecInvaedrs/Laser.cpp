@@ -24,9 +24,9 @@ ALaser::ALaser(const FObjectInitializer &ObjectInitializer)
     collision->AttachTo(mesh);
     
     collision->InitBoxExtent(FVector(10, 20, 20));
-    collision->bGenerateOverlapEvents = true;
 
     speed = 500;
+    isEnemyLaser = false;
 }
 
 // Called when the game starts or when spawned
@@ -39,10 +39,16 @@ void ALaser::BeginPlay()
 void ALaser::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-    AddActorWorldOffset(FVector(DeltaTime * speed, 0, 0));
+    float direction = 1.0f;
+
+    if (isEnemyLaser) {
+        direction = -1.0f;
+    }
+
+    AddActorWorldOffset(FVector(DeltaTime * speed * direction, 0, 0));
 
     FVector location = GetRootComponent()->GetComponentLocation();
-    if (location.X > 500) {
+    if (FMath::Abs(location.X) > 500) {
         Destroy();
     }
 }

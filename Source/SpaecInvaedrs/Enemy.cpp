@@ -36,13 +36,28 @@ void AEnemy::BeginPlay()
 void AEnemy::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+    if (isShooting) {
+        /* For who-knows-what reason, UE4 checks for collisions immediately upon
+         * actor spawn, which will destroy us immediately */
+        SetActorEnableCollision(false);
+        FVector location = GetRootComponent()->GetComponentLocation();
+        ALaser *laser = GetWorld()->SpawnActor<ALaser>(location, FRotator(270, 0, 0));
+        laser->isEnemyLaser = true;
+        isShooting = false;
+        SetActorEnableCollision(true);
+    }
 }
 
 void AEnemy::OnBeginOverlap(AActor *otherActor) {
-    if (otherActor->IsA(ALaser::StaticClass())) {
+    if (otherActor->IsA(ALaser::StaticClass()) && !((ALaser*)otherActor)->isEnemyLaser) {
         deathSound->Play();
         mesh->SetVisibility(false);
         bAutoDestroyWhenFinished = true;
         otherActor->Destroy();
     }
+}
+
+void AEnemy::shoot() {
+    isShooting = true;
 }

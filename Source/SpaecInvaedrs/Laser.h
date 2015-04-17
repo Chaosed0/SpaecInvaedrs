@@ -8,8 +8,8 @@
 UCLASS()
 class SPAECINVAEDRS_API ALaser : public AActor
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:	
 	// Sets default values for this actor's properties
 	ALaser(const FObjectInitializer &ObjectInitializer);
@@ -28,4 +28,10 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float speed;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float direction;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool isEnemyLaser;
 };

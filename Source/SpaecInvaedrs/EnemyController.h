@@ -11,11 +11,15 @@ class SPAECINVAEDRS_API AEnemyController : public AActor
     GENERATED_BODY()
 
     float moveTimer;
+    float shootTimer;
     float direction;
+    float shootTime;
     bool flippedDirection;
     bool moveDown;
 
-    TSharedPtr<TActorIterator<class AEnemy>> EnemyIter;
+    int numEnemies;
+
+    TSharedPtr<TActorIterator<class AEnemy>> EnemyMoveIter;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -27,9 +31,18 @@ public:
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 
+    UFUNCTION()
+    void OnEnemyDeath();
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float speed;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float moveTime;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float shootTimeMin;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float shootTimeMax;
 };

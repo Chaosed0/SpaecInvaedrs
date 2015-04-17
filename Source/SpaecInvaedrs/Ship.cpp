@@ -14,12 +14,17 @@ AShip::AShip(const FObjectInitializer &ObjectInitializer)
 
     mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh"));
     shootSound = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("ShootSound"));
+    deathSound = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("DeathSound"));
 
     SetRootComponent(mesh);
     shootSound->AttachTo(mesh);
     shootSound->bAutoActivate = false;
+    deathSound->AttachTo(mesh);
+    deathSound->bAutoActivate = false;
 
     speed = 100;
+
+    OnActorBeginOverlap.AddDynamic(this, &AShip::OnBeginOverlap);
 }
 
 // Called when the game starts or when spawned
@@ -61,5 +66,14 @@ void AShip::Shoot() {
         AActor *laser = GetWorld()->SpawnActor<ALaser>(location, FRotator(90, 0, 0));
         shootSound->Play();
         shootTimer = 0;
+    }
+}
+
+void AShip::OnBeginOverlap(AActor *otherActor) {
+    if (otherActor->IsA(ALaser::StaticClass()) && ((ALaser*)otherActor)->isEnemyLaser) {
+        deathSound->Play();
+        mesh->SetVisibility(false);
+        bAutoDestroyWhenFinished = true;
+        otherActor->Destroy();
     }
 }

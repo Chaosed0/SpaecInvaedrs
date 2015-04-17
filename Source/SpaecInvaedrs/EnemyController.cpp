@@ -6,8 +6,7 @@
 #include "Enemy.h"
 
 // Sets default values
-AEnemyController::AEnemyController()
-{
+AEnemyController::AEnemyController() {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -16,29 +15,66 @@ AEnemyController::AEnemyController()
     flippedDirection = false;
     moveDown = false;
     moveTime = 1;
-    EnemyIter = NULL;
+    EnemyMoveIter = NULL;
+
+    shootTimeMin = 0.5;
+    shootTimeMax = 1.25;
+
+    shootTimer = 0;
+    numEnemies = 0;
 }
 
 // Called when the game starts or when spawned
-void AEnemyController::BeginPlay()
-{
+void AEnemyController::BeginPlay() {
 	Super::BeginPlay();
+
+    /* Count how many enemies exist, and add a callback to tell us when they're dead */
+    for (auto EnemyIter = TActorIterator<AEnemy>(GetWorld()); EnemyIter; ++EnemyIter) {
+        numEnemies++;
+        EnemyIter->OnDestroyed.AddDynamic(this, &AEnemyController::OnEnemyDeath);
+    }
+    UE_LOG(LogTemp, Log, TEXT("Number of enemies: %d"), numEnemies);
+
+    /* Figure out when we should shoot */
+    shootTime = FMath::FRandRange(shootTimeMin, shootTimeMax);
+}
+
+// Called when any enemy dies
+void AEnemyController::OnEnemyDeath() {
+    --numEnemies;
 }
 
 // Called every frame
-void AEnemyController::Tick(float DeltaTime)
-{
+void AEnemyController::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
 
     moveTimer += DeltaTime;
+    shootTimer += DeltaTime;
 
-    if (moveTimer >= moveTime && !EnemyIter.IsValid()) {
-        moveTimer -= moveTime;
-        EnemyIter = TSharedPtr<TActorIterator<AEnemy>>(new TActorIterator<AEnemy>(GetWorld()));
-        UE_LOG(LogTemp, Log, TEXT("Moving Enemies"));
+    UE_LOG(LogTemp, Log, TEXT("%g/%g"), shootTimer, shootTime);
+
+    if (shootTimer >= shootTime && numEnemies > 0) {
+        shootTimer -= shootTime;
+        shootTime = FMath::FRandRange(shootTimeMin, shootTimeMax);
+
+        // Fire off a random shot
+        int shooterIndex = FMath::RandHelper(numEnemies);
+        UE_LOG(LogTemp, Log, TEXT("Shooting %d"), shooterIndex);
+        auto shooter = TActorIterator<AEnemy>(GetWorld());
+        for (int i = 0; i < shooterIndex; i++) {
+            ++shooter;
+        }
+
+        shooter->shoot();
     }
 
-    if (EnemyIter.IsValid() && (*EnemyIter)) {
+    if (moveTimer >= moveTime && !EnemyMoveIter.IsValid()) {
+        /* Begin another move */
+        moveTimer -= moveTime;
+        EnemyMoveIter = TSharedPtr<TActorIterator<AEnemy>>(new TActorIterator<AEnemy>(GetWorld()));
+    }
+
+    if (EnemyMoveIter.IsValid() && (*EnemyMoveIter)) {
         /* If we hit the border last movement, move down instead of left/right */
         FVector movement;
         if (!moveDown) {
@@ -47,20 +83,20 @@ void AEnemyController::Tick(float DeltaTime)
             movement = FVector(-speed, 0, 0);
         }
 
-        (*EnemyIter)->AddActorWorldOffset(movement);
+        (*EnemyMoveIter)->AddActorWorldOffset(movement);
 
         /* If we hit the border with one of our ships this movement, change direction
          * and move down in the next movement */
-        if (!moveDown && FMath::Abs((*EnemyIter)->GetActorLocation().Y) >= 500) {
+        if (!moveDown && FMath::Abs((*EnemyMoveIter)->GetActorLocation().Y) >= 500) {
             flippedDirection = true;
         }
 
-        ++(*EnemyIter);
+        ++(*EnemyMoveIter);
         
         /* Have we run out of enemies to move? */
-        if (!(*EnemyIter)) {
+        if (!(*EnemyMoveIter)) {
             /* Null out the enemy iterator pointer so we know we ran out*/
-            EnemyIter = NULL;
+            EnemyMoveIter = NULL;
             if (flippedDirection) {
                 /* Flip the direction */
                 direction = -direction;

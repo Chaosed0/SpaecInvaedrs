@@ -26,6 +26,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+    void AShip::OnBeginOverlap(AActor *otherActor);
+
     void Move(float axisValue);
     void Shoot();
 
@@ -34,6 +36,9 @@ public:
 
     UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
     class UAudioComponent *shootSound;
+
+    UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly)
+    class UAudioComponent *deathSound;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float speed;
