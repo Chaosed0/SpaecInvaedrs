@@ -14,10 +14,11 @@ class SPAECINVAEDRS_API AEnemyController : public AActor
     float shootTimer;
     float direction;
     float shootTime;
+    float moveTime;
+    float initialEnemyCount;
     bool flippedDirection;
     bool moveDown;
-
-    int numEnemies;
+    int enemyCount;
 
     TSharedPtr<TActorIterator<class AEnemy>> EnemyMoveIter;
 	
@@ -38,7 +39,10 @@ public:
     float speed;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    float moveTime;
+    float initialMoveTime;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    float minimumMoveTime;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float shootTimeMin;

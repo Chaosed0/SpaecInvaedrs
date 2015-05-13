@@ -14,14 +14,17 @@ AEnemyController::AEnemyController() {
     direction = 1.0f;
     flippedDirection = false;
     moveDown = false;
-    moveTime = 1;
     EnemyMoveIter = NULL;
 
     shootTimeMin = 0.5;
     shootTimeMax = 1.25;
 
+    initialMoveTime = 1;
+    minimumMoveTime = 0.05;
+
     shootTimer = 0;
-    numEnemies = 0;
+    enemyCount = 0;
+    moveTime = initialMoveTime;
 }
 
 // Called when the game starts or when spawned
@@ -30,18 +33,20 @@ void AEnemyController::BeginPlay() {
 
     /* Count how many enemies exist, and add a callback to tell us when they're dead */
     for (auto EnemyIter = TActorIterator<AEnemy>(GetWorld()); EnemyIter; ++EnemyIter) {
-        numEnemies++;
+        initialEnemyCount++;
         EnemyIter->OnDestroyed.AddDynamic(this, &AEnemyController::OnEnemyDeath);
     }
-    UE_LOG(LogTemp, Log, TEXT("Number of enemies: %d"), numEnemies);
+    enemyCount = initialEnemyCount;
 
-    /* Figure out when we should shoot */
+    /* Figure out when we should move & shoot */
     shootTime = FMath::FRandRange(shootTimeMin, shootTimeMax);
+    moveTime = initialMoveTime;
 }
 
 // Called when any enemy dies
 void AEnemyController::OnEnemyDeath() {
-    --numEnemies;
+    --enemyCount;
+    moveTime = minimumMoveTime + (initialMoveTime - minimumMoveTime) * enemyCount / initialEnemyCount;
 }
 
 // Called every frame
@@ -51,12 +56,12 @@ void AEnemyController::Tick(float DeltaTime) {
     moveTimer += DeltaTime;
     shootTimer += DeltaTime;
 
-    if (shootTimer >= shootTime && numEnemies > 0) {
+    if (shootTimer >= shootTime && enemyCount > 0) {
         shootTimer -= shootTime;
         shootTime = FMath::FRandRange(shootTimeMin, shootTimeMax);
 
         // Fire off a random shot
-        int shooterIndex = FMath::RandHelper(numEnemies);
+        int shooterIndex = FMath::RandHelper(enemyCount);
         auto shooter = TActorIterator<AEnemy>(GetWorld());
         for (int i = 0; i < shooterIndex; i++) {
             ++shooter;
