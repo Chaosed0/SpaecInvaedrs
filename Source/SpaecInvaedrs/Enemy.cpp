@@ -39,7 +39,9 @@ void AEnemy::Tick( float DeltaTime )
 
     if (isShooting) {
         /* For who-knows-what reason, UE4 checks for collisions immediately upon
-         * actor spawn, which will destroy us immediately */
+         * actor spawn, which will destroy us immediately as the laser hasn't been
+         * initialized as an enemy laser yet; thus, we disable collisions, then
+         * re-enable them after we set the isEnemyLaser property */
         SetActorEnableCollision(false);
         FVector location = GetRootComponent()->GetComponentLocation();
         ALaser *laser = GetWorld()->SpawnActor<ALaser>(location, FRotator(270, 0, 0));

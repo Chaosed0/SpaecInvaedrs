@@ -13,14 +13,21 @@ AShip::AShip(const FObjectInitializer &ObjectInitializer)
 	PrimaryActorTick.bCanEverTick = true;
 
     mesh = ObjectInitializer.CreateDefaultSubobject<UStaticMeshComponent>(this, TEXT("StaticMesh"));
+    collision = ObjectInitializer.CreateDefaultSubobject<UBoxComponent>(this, TEXT("BoxCollider"));
     shootSound = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("ShootSound"));
     deathSound = ObjectInitializer.CreateDefaultSubobject<UAudioComponent>(this, TEXT("DeathSound"));
 
     SetRootComponent(mesh);
     shootSound->AttachTo(mesh);
-    shootSound->bAutoActivate = false;
     deathSound->AttachTo(mesh);
+    collision->AttachTo(mesh);
+
+    shootSound->bAutoActivate = false;
     deathSound->bAutoActivate = false;
+
+    collision->bGenerateOverlapEvents = true;
+    collision->SetRelativeLocation(FVector(0, 0, 30));
+    collision->SetBoxExtent(FVector(48, 48, 32));
 
     speed = 100;
 

@@ -51,15 +51,12 @@ void AEnemyController::Tick(float DeltaTime) {
     moveTimer += DeltaTime;
     shootTimer += DeltaTime;
 
-    UE_LOG(LogTemp, Log, TEXT("%g/%g"), shootTimer, shootTime);
-
     if (shootTimer >= shootTime && numEnemies > 0) {
         shootTimer -= shootTime;
         shootTime = FMath::FRandRange(shootTimeMin, shootTimeMax);
 
         // Fire off a random shot
         int shooterIndex = FMath::RandHelper(numEnemies);
-        UE_LOG(LogTemp, Log, TEXT("Shooting %d"), shooterIndex);
         auto shooter = TActorIterator<AEnemy>(GetWorld());
         for (int i = 0; i < shooterIndex; i++) {
             ++shooter;
