@@ -52,6 +52,12 @@ void AShip::Tick( float DeltaTime )
         newLocation.Y = FMath::Min(FMath::Max(newLocation.Y, -500.0f), 500.0f);
         SetActorLocation(newLocation);
     }
+    if (isShooting && shootTimer >= shootCooldown) {
+        FVector location = GetRootComponent()->GetComponentLocation();
+        AActor *laser = GetWorld()->SpawnActor<ALaser>(location, FRotator(90, 0, 0));
+        shootSound->Play();
+        shootTimer = 0;
+    }
 }
 
 // Called to bind functionality to input
@@ -60,20 +66,20 @@ void AShip::SetupPlayerInputComponent(class UInputComponent* InputComponent)
 	Super::SetupPlayerInputComponent(InputComponent);
 
     InputComponent->BindAxis("LRAxis", this, &AShip::Move);
-    InputComponent->BindAction("Shoot", IE_Pressed, this, &AShip::Shoot);
+    InputComponent->BindAction("Shoot", IE_Pressed, this, &AShip::StartShoot);
+    InputComponent->BindAction("Shoot", IE_Released, this, &AShip::StopShoot);
 }
 
 void AShip::Move(float axisValue) {
     direction = axisValue;
 }
 
-void AShip::Shoot() {
-    if (shootTimer >= shootCooldown) {
-        FVector location = GetRootComponent()->GetComponentLocation();
-        AActor *laser = GetWorld()->SpawnActor<ALaser>(location, FRotator(90, 0, 0));
-        shootSound->Play();
-        shootTimer = 0;
-    }
+void AShip::StartShoot() {
+    isShooting = true;
+}
+
+void AShip::StopShoot() {
+    isShooting = false;
 }
 
 void AShip::OnBeginOverlap(AActor *otherActor) {

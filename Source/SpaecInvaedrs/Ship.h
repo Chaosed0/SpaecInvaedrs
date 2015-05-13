@@ -8,8 +8,9 @@
 UCLASS()
 class SPAECINVAEDRS_API AShip : public APawn
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
+    bool isShooting;
     float direction;
     float shootTimer;
 
@@ -27,7 +28,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
     void Move(float axisValue);
-    void Shoot();
+    void StartShoot();
+    void StopShoot();
 
     UFUNCTION()
     void OnBeginOverlap(AActor *otherActor);
