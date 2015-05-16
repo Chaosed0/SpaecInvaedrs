@@ -3,6 +3,7 @@
 #include "SpaecInvaedrs.h"
 #include "Ship.h"
 #include "Laser.h"
+#include "EnemyLaser.h"
 
 float AShip::shootCooldown = 1;
 
@@ -83,7 +84,7 @@ void AShip::StopShoot() {
 }
 
 void AShip::OnBeginOverlap(AActor *otherActor) {
-    if (otherActor->IsA(ALaser::StaticClass()) && ((ALaser*)otherActor)->isEnemyLaser) {
+    if (otherActor->IsA(AEnemyLaser::StaticClass())) {
         deathSound->Play();
         mesh->SetVisibility(false);
         bAutoDestroyWhenFinished = true;

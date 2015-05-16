@@ -26,7 +26,7 @@ ALaser::ALaser(const FObjectInitializer &ObjectInitializer)
     collision->InitBoxExtent(FVector(10, 20, 20));
 
     speed = 500;
-    isEnemyLaser = false;
+    direction = FVector(1, 0, 0);
 }
 
 // Called when the game starts or when spawned
@@ -39,13 +39,8 @@ void ALaser::BeginPlay()
 void ALaser::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-    float direction = 1.0f;
 
-    if (isEnemyLaser) {
-        direction = -1.0f;
-    }
-
-    AddActorWorldOffset(FVector(DeltaTime * speed * direction, 0, 0));
+    AddActorWorldOffset(direction * DeltaTime * speed);
 
     FVector location = GetRootComponent()->GetComponentLocation();
     if (FMath::Abs(location.X) > 500) {

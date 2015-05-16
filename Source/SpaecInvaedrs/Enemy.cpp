@@ -3,6 +3,7 @@
 #include "SpaecInvaedrs.h"
 #include "Enemy.h"
 #include "Laser.h"
+#include "EnemyLaser.h"
 
 
 // Sets default values
@@ -44,15 +45,14 @@ void AEnemy::Tick( float DeltaTime )
          * re-enable them after we set the isEnemyLaser property */
         SetActorEnableCollision(false);
         FVector location = GetRootComponent()->GetComponentLocation();
-        ALaser *laser = GetWorld()->SpawnActor<ALaser>(location, FRotator(270, 0, 0));
-        laser->isEnemyLaser = true;
+        AEnemyLaser *laser = GetWorld()->SpawnActor<AEnemyLaser>(location, FRotator(0, 90, 0));
         isShooting = false;
         SetActorEnableCollision(true);
     }
 }
 
 void AEnemy::OnBeginOverlap(AActor *otherActor) {
-    if (otherActor->IsA(ALaser::StaticClass()) && !((ALaser*)otherActor)->isEnemyLaser) {
+    if (otherActor->IsA(ALaser::StaticClass()) && !otherActor->IsA(AEnemyLaser::StaticClass())) {
         deathSound->Play();
         mesh->SetVisibility(false);
         bAutoDestroyWhenFinished = true;
