@@ -25,7 +25,7 @@ ALaser::ALaser(const FObjectInitializer &ObjectInitializer)
     
     collision->InitBoxExtent(FVector(10, 20, 20));
 
-    speed = 500;
+    speed = 1000;
     direction = FVector(1, 0, 0);
 }
 

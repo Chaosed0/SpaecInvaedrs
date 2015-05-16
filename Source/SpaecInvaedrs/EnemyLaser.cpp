@@ -16,5 +16,7 @@ AEnemyLaser::AEnemyLaser(const FObjectInitializer &ObjectInitializer)
     mesh->SetRelativeScale3D(FVector(0.25, 0.25, 0.25));
     collision->SetWorldScale3D(FVector(1, 1, 1));
 
+    speed = 500;
+
     direction = FVector(-1, 0, 0);
 }
