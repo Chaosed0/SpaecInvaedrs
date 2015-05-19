@@ -2,6 +2,11 @@
 
 #pragma once
 
+#include "Runtime/UMG/Public/UMG.h"
+#include "Runtime/UMG/Public/UMGStyle.h"
+#include "Runtime/UMG/Public/Slate/SObjectWidget.h"
+#include "Runtime/UMG/Public/IUMGModule.h"
+#include "Runtime/UMG/Public/Blueprint/UserWidget.h"
 #include "GameFramework/Pawn.h"
 #include "Ship.generated.h"
 
@@ -27,8 +32,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
+    UFUNCTION()
     void Move(float axisValue);
+
+    UFUNCTION()
     void StartShoot();
+
+    UFUNCTION()
     void StopShoot();
 
     UFUNCTION()
@@ -48,6 +58,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float speed;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=UI)
+    TSubclassOf<UUserWidget> GameOverWidget;
 
     static float shootCooldown;
 };

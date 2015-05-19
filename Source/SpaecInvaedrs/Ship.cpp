@@ -84,10 +84,14 @@ void AShip::StopShoot() {
 }
 
 void AShip::OnBeginOverlap(AActor *otherActor) {
+    UUserWidget *widget;
     if (otherActor->IsA(AEnemyLaser::StaticClass())) {
         deathSound->Play();
         mesh->SetVisibility(false);
         bAutoDestroyWhenFinished = true;
         otherActor->Destroy();
+
+        widget = CreateWidget<UUserWidget>(GetWorld(), *GameOverWidget);
+        widget->AddToViewport();
     }
 }
