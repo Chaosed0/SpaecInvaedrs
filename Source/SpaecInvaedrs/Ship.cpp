@@ -91,7 +91,12 @@ void AShip::OnBeginOverlap(AActor *otherActor) {
         bAutoDestroyWhenFinished = true;
         otherActor->Destroy();
 
-        widget = CreateWidget<UUserWidget>(GetWorld(), *GameOverWidget);
+        widget = CreateWidget<UUserWidget>(GetWorld()->GetFirstPlayerController(), *GameOverWidget);
         widget->AddToViewport();
+
+        FInputModeUIOnly Mode;
+        Mode.SetWidgetToFocus(widget->GetCachedWidget());
+        GetWorld()->GetFirstPlayerController()->SetInputMode(Mode);
+        GetWorld()->GetFirstPlayerController()->bShowMouseCursor = true;
     }
 }
