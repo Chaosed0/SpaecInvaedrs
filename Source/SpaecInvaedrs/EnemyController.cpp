@@ -47,6 +47,11 @@ void AEnemyController::BeginPlay() {
 void AEnemyController::OnEnemyDeath() {
     --enemyCount;
     moveTime = minimumMoveTime + (initialMoveTime - minimumMoveTime) * enemyCount / initialEnemyCount;
+
+    /* Check if any enemies remain */
+    if (enemyCount <= 0) {
+        OnAllEnemiesDead();
+    }
 }
 
 // Called every frame

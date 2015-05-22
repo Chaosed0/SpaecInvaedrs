@@ -35,6 +35,9 @@ public:
     UFUNCTION()
     void OnEnemyDeath();
 
+    UFUNCTION(BlueprintImplementableEvent, Category="Events", meta=(FriendlyName="All Enemies Dead"))
+    void OnAllEnemiesDead();
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     float speed;
 
